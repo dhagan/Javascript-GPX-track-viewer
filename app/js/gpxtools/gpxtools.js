@@ -362,6 +362,8 @@ GPXParser.prototype._parseTrackPoint = function (trackpoint, lastpnt) {
         pnt.ele = parseFloat(elmsElevation[0].textContent);
     }
 
+    pnt.ele = Math.random() * 10;
+
     var elmsTime = trackpoint.getElementsByTagName('time');
     if (elmsTime.length > 0) {
         pnt.time = Date.parse(elmsTime[0].textContent);

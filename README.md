@@ -1,9 +1,6 @@
 In browser GPX viewer using file api in javascript
 ===
 
-I wanted a simple way of viewing GPX track logs without uploading it to big brother's cloud.
-
-- load http://gpx.tomaskafka.com
 - drag .gpx file into browser window
 - track shows on map
 - all parsing is done in browser, nothing gets sent to server
@@ -11,4 +8,5 @@ I wanted a simple way of viewing GPX track logs without uploading it to big brot
 
 Mentions:
 ---
+Props to http://gpx.tomaskafka.com
 Czech biker forum http://www.bike-forum.cz/forum/tool-na-rychle-zobrazeni-gpx-trasy-z-gpsky.html

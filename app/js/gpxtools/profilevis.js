@@ -79,6 +79,7 @@ ProfileVisualizer.prototype._chartSeries = function (seriesdata) {
         },
         tooltip: {
             formatter: function () {
+                // DJH I tried index, id
                 return Highcharts.dateFormat('%H:%M:%S', this.x) + ': ' + this.y + ' m';
             }
         },
