@@ -63,7 +63,7 @@ $(document).ready(function () {
             draw_slope = true;
             draw_profile = true;
         }
-        // and update containsers
+        // and update containers
         set_feature(draw_slope, 'slopevis', function (el) {
             slopevis = new SlopeVisualizer(el);
         });

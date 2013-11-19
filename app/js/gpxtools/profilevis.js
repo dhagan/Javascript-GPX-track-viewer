@@ -51,6 +51,12 @@ ProfileVisualizer.prototype.drawGpx = function (gpxdata) {
 
 var $reporting = $('#reporting');
 
+var hoverMarker = new google.maps.Marker({
+    map: map
+});
+
+
+
 ProfileVisualizer.prototype._chartSeries = function (seriesdata) {
     this.jqelement.html('');
 
@@ -129,12 +135,16 @@ ProfileVisualizer.prototype._chartSeries = function (seriesdata) {
                     events: {
                         mouseOver: function() {
                             $reporting.html('x: '+ this.x +', y: '+ this.y);
+                            hoverMarker.setVisible(true);
+                            var _position = new google.maps.LatLng(this.point.lat,this.point.lon);
+                            hoverMarker.setPosition(_position);
                         }
                     }
                 },
                 events: {
                     mouseOut: function() {
                         $reporting.empty();
+                        hoverMarker.setVisible(false);
                     }
                 }
             }

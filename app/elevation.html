@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: sans-serif;
+}
+#map {
+  width: 100%;
+  height: 70%;
+}
+input[name] {
+  width: 20%;
+}
+#error {
+  background: red;
+  color: white;
+  font-size: 10px;
+  padding: 3px;
+  display: none;
+}
+#elevation-chart {
+ 
+}
+#elevation-chart div {
+  float: left;
+  margin-right: 0px;
+  position: relative;
+  height: 100px;
+}
+#elevation-chart div div {
+	background-color:#FF0000;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-top: 2px solid #000;
+}
+#elevation-hover {
+  display: none;
+  background: #ffc;
+  border: 1px solid black;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  position: absolute;
+  font-size: 10px;
+  padding: 3px;
+  -webkit-transform: rotate(-45deg); 
+  -moz-transform: rotate(-45deg);
+  z-index: 1;
+  cursor: default;
+}
+
+.share {
+  font-size: 10px;
+  float: right;
+  padding: 0 5px;
+}
+</style>
+  <meta charset="utf-8">
+  <title>Draggable elevation</title>
+  <link rel="stylesheet" href="maps.css">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXGki53QMxSnA_ujvu8rDlbCJfBiwAPZQ&sensor=false"></script>
+  <script type="text/javascript" charset="utf-8">
+  
+  $(document).ready(function() {
+    var recalcHeight = function() {
+      $("#map").height($(window).height() - $("form").height() - $("#elevation").height());
+      map && google.maps.event.trigger(map, 'resize');
+    };
+    $(window).resize(recalcHeight);
+    recalcHeight();
+
+    for (o in google.maps.DirectionsTravelMode) {
+      $("#mode").append(new Option(o));
+    }
+
+    var map = new google.maps.Map($('#map')[0], {
+              center: new google.maps.LatLng(36.080, -115.1522),
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      zoom: 10
+    });
+	
+
+	    
+	
+
+    var dr = new google.maps.DirectionsRenderer({
+      map: map,
+      draggable: true,
+      preserveViewport: true
+    });
+	
+  	
+
+    var hoverMarker = new google.maps.Marker({
+      map: map
+    });
+
+    $("#elevation").mouseleave(function() {
+      hoverMarker.setVisible(false);
+      $("#elevation-hover").hide();
+    });
+
+    var es = new google.maps.ElevationService();
+    var ds = new google.maps.DirectionsService();
+
+    var fitBounds = false;
+
+    google.maps.event.addListener(dr, 'directions_changed', function() {
+      var route = dr.getDirections().routes[0];
+      var path = route.overview_path;
+      es.getElevationAlongPath({
+        path: path,
+        samples: 300
+      }, function(result, status) {
+        if (status == google.maps.ElevationStatus.OK) {
+          drawElevation(result);
+          recalcHeight();
+          if (fitBounds) {
+            map.fitBounds(route.bounds);
+            fitBounds = false;
+          }
+        }
+        else {
+            map.fitBounds(bounds);
+        }
+        recalcHeight();
+      });
+    });
+
+    $('#directions-form').submit(function(e) {
+      $('#error').hide();
+      ds.route({
+        origin: $('#from').val(),
+        destination: $('#to').val(),
+        travelMode: $('#mode').val()
+      }, function(result, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+          fitBounds = true;
+          dr.setDirections(result),
+		  dr.setDirections(response);
+        }
+        else {
+          $('#error').text(status).show();
+        }
+        recalcHeight();
+      });
+      e.preventDefault();
+      return false;
+    });
+
+    var drawElevation = function(r) {
+      var max = writeStats(r);
+      drawGraph(r, max);
+    };
+
+    var writeStats = function(r) {
+      var prevElevation = r[0].elevation;
+      var climb = 0;
+      var drop = 0;
+      var max = 0;
+      for (var i = 1; i < r.length; i++) {
+        var diff = r[i].elevation - prevElevation;
+        prevElevation = r[i].elevation;
+        if (diff > 0) {
+          climb += diff;
+        }
+        else {
+          drop -= diff;
+        }
+
+        if (r[i].elevation > max) {
+          max = r[i].elevation;
+        }
+      }
+      max = Math.ceil(max);
+      $('#climb-drop').text("Climb: " + Math.round(climb) + "m Drop: " + Math.round(drop) + "m");
+      return max;
+    };
+
+    var drawGraph = function(r, max) {
+      var ec = $("#elevation-chart").empty()
+
+      var width = Math.max(1, Math.floor(Math.min(11, ec.width() / r.length)) - 1);
+      var height = 100;
+      $.each(r, function(i, e) {
+        var barHeight = Math.round(e.elevation / max * height);
+        var bar = $("<div style='width:2px'><div style='height:" + barHeight + "px;'></div></div>");
+        ec.append(bar);
+        bar.mouseenter(function() {
+          var offset = bar.find("div").offset();
+          offset.top -= 25;
+          offset.left -= 3;
+          hoverMarker.setVisible(true);
+          hoverMarker.setPosition(e.location);
+          $("#elevation-hover").show().text(Math.round(e.elevation) + 'm').offset(offset);
+          if (!map.getBounds().contains(e.location)) {
+            map.panTo(e.location);
+          }
+        }).click(function() {
+          map.panTo(e.location);
+        });
+      });
+    };
+
+    $(".share").click(function() {
+      $(this).find("input").focus().select();
+    });
+  });
+  </script>
+  <link rel="stylesheet" href="styles.css" type="text/css" media="screen" charset="utf-8">
+</head>
+<body>
+  <form action="#" method="get" accept-charset="utf-8" id="directions-form">
+    <input id="from" name="from" value="11117 Deluna St, Las Vegas, NV, USA">
+    <input id="to" name="to" value="4254 Dean Martin Ave, LAs VEgas, NV, USA">
+    <select name="mode" id="mode"></select>
+    <input type="submit" value="Elevate &rarr;">
+
+    <div id="error"></div>
+  </form>
+  <div id="map" style="width:70%; float: left; height: 75%"></div>
+  <div id="directionsPanel" style="float:right; background-color:#CCC; width:30%;height:100%;"></div>
+
+  
+  <div id="elevation" style="float:left; height: 24%;">
+    <div id="elevation-hover"></div>
+    <div id="climb-drop"></div>
+    <div id="elevation-chart"></div>
+  </div>
+  
+</body>
+</html>
