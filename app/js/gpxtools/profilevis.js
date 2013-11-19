@@ -29,8 +29,10 @@ ProfileVisualizer.prototype.drawGpx = function (gpxdata) {
                         var ele = Math.round(bufferSum / 5);
                         // var time = point.time;
                         var time = point.time - starttime;
-
-                        segmentdata.data.push([time, ele]);
+                        var _point = { x: time, y: ele, lat: point.lat, lon: point.lon};
+                        //var _point = { y: time, x: ele};
+                        segmentdata.data.push(_point);
+                        //segmentdata.data.push([time, ele]);
 
                         bufferCnt = 0;
                         bufferSum = 0;
@@ -46,6 +48,8 @@ ProfileVisualizer.prototype.drawGpx = function (gpxdata) {
 
     this._chartSeries(series);
 }
+
+var $reporting = $('#reporting');
 
 ProfileVisualizer.prototype._chartSeries = function (seriesdata) {
     this.jqelement.html('');
@@ -80,7 +84,7 @@ ProfileVisualizer.prototype._chartSeries = function (seriesdata) {
         tooltip: {
             formatter: function () {
                 // DJH I tried index, id
-                return Highcharts.dateFormat('%H:%M:%S', this.x) + ': ' + this.y + ' m';
+                return Highcharts.dateFormat('%H:%M:%S', this.x) + ': ' + this.y + ' m ' + this.point.lat + ' ' + this.point.lon;
             }
         },
         plotOptions: {
@@ -118,7 +122,24 @@ ProfileVisualizer.prototype._chartSeries = function (seriesdata) {
                         lineWidth: 1
                     }
                 }
+            },
+
+            series: {
+                point: {
+                    events: {
+                        mouseOver: function() {
+                            $reporting.html('x: '+ this.x +', y: '+ this.y);
+                        }
+                    }
+                },
+                events: {
+                    mouseOut: function() {
+                        $reporting.empty();
+                    }
+                }
             }
+
+
         },
 
         series: seriesdata
