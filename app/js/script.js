@@ -72,7 +72,7 @@ $(document).ready(function () {
         });
         updateLayout();
 
-        parser.DrawGpx(gpxData, null, true, true);
+        parser.DrawGpx(gpxData, true, true);
 
         if (draw_slope)
             slopevis.drawGpx(gpxData);

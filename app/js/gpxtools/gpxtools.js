@@ -242,9 +242,7 @@ GPXParser.prototype._parseWaypoint = function (xmlwaypoint) {
 
 // ---------------------- DRAWING ----------------------------------
 
-GPXParser.prototype.DrawGpx = function (gpxdata, maptype, drawTracks, drawWaypoints, drawRoutes) {
-    if (maptype == null)
-        maptype = this.map.getCurrentMapType();
+GPXParser.prototype.DrawGpx = function (gpxdata, drawTracks, drawWaypoints, drawRoutes) {
 
     if (drawTracks == null)
         drawTracks = true;
@@ -257,7 +255,7 @@ GPXParser.prototype.DrawGpx = function (gpxdata, maptype, drawTracks, drawWaypoi
 
     this._clearMarkers();
 
-    this._centerAndZoom(gpxdata, maptype);
+    this._centerAndZoom(gpxdata);
 
     if (drawTracks)
         func.map(gpxdata.tracks, this, this._drawTrack, this.segmentcolorprovider, this.trackwidth);
@@ -286,7 +284,7 @@ GPXParser.prototype._drawSegment = function (segment, segmentcolorprovider, trac
         // Verify that this is far enough away from the last point to be used, and draw the segment
         if (this._pntDistance(lastpnt, pnt) > this.mintrackpointdelta) {
             var color = segmentcolorprovider(lastpnt, pnt);
-            var polyline = new GPolyline(linesegment, color, trackwidth);
+            var polyline = new google.maps.Polyline(linesegment, color, trackwidth);
             this._addOverlay(polyline);
         }
 
@@ -305,7 +303,7 @@ GPXParser.prototype._drawRoute = function (route, color, trackwidth) {
         var pnt = route.points[i];
         var linesegment = [lastpnt.latlng, pnt.latlng];
 
-        var polyline = new GPolyline(linesegment, color, trackwidth);
+        var polyline = new google.maps.Polyline(linesegment, color, trackwidth);
         this._addOverlay(polyline);
 
         this._drawWaypoint(pnt);
@@ -380,7 +378,7 @@ GPXParser.prototype._parseTrackPoint = function (trackpoint, lastpnt) {
     return pnt;
 }
 
-GPXParser.prototype._centerAndZoom = function (gpxdata, maptype) {
+GPXParser.prototype._centerAndZoom = function (gpxdata) {
     var minlat = 0;
     var maxlat = 0;
     var minlon = 0;
@@ -412,7 +410,7 @@ GPXParser.prototype._centerAndZoom = function (gpxdata, maptype) {
 
 
     if ((minlat == maxlat) && (minlat == 0)) {
-        this.map.setCenter(new google.maps.LatLng(49.327667, -122.942333), 14);
+        this.map.setCenter(new google.maps.LatLng(49.327667, -122.942333));
         return;
     }
 
@@ -422,12 +420,13 @@ GPXParser.prototype._centerAndZoom = function (gpxdata, maptype) {
 
     var bounds = new google.maps.LatLngBounds(new google.maps.LatLng(minlat, minlon), new google.maps.LatLng(maxlat, maxlon));
 
-    this.map.setCenter(new google.maps.LatLng(centerlat, centerlon), this.map.getBoundsZoomLevel(bounds), maptype);
+    this.map.setCenter(new google.maps.LatLng(centerlat, centerlon));
 }
 
 GPXParser.prototype._addOverlay = function (marker) {
     this.markers.push(marker);
-    this.map.addOverlay(marker);
+    marker.setMap(this.map);
+    //this.map.addOverlay(marker);
 }
 
 GPXParser.prototype._clearMarkers = function () {
