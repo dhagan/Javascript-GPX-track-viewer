@@ -64,19 +64,21 @@ $(document).ready(function () {
             draw_profile = true;
         }
         // and update containers
+        /* DJH 11/26/2013
         set_feature(draw_slope, 'slopevis', function (el) {
             slopevis = new SlopeVisualizer(el);
         });
+        */
         set_feature(draw_profile, 'profilegraph', function (el) {
             profilevis = new ProfileVisualizer(el);
         });
         updateLayout();
 
         parser.DrawGpx(gpxData, true, true);
-
+/* DJH 11/26/2013
         if (draw_slope)
             slopevis.drawGpx(gpxData);
-
+*/
         if (draw_profile)
             profilevis.drawGpx(gpxData);
     });
@@ -102,10 +104,10 @@ function writeLegend(ramp) {
 }
 
 function createMap(mapElementId) {
-    var sf =  new google.maps.LatLng(37.86, -122.43);
+    //var sf =  new google.maps.LatLng(37.86, -122.43);
     var myOptions = {
         zoom: 7,
-        center: sf,
+        //center: sf,
         mapTypeId: google.maps.MapTypeId.SATELLITE
     };
     //map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);

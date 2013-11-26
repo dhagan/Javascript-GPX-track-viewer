@@ -78,7 +78,7 @@ ProfileVisualizer.prototype._chartSeries = function (seriesdata) {
         },
         yAxis: {
             title: {
-                text: 'Elevation (m)'
+                text: 'Speed (km/h)'
             }
             //,min: 0
         },
@@ -130,16 +130,16 @@ ProfileVisualizer.prototype._chartSeries = function (seriesdata) {
                     events: {
                         mouseOver: function() {
                             $reporting.html('x: '+ this.x +', y: '+ this.y);
-                            hoverMarker.setVisible(true);
-                            var _position = new google.maps.LatLng(this.point.lat,this.point.lon);
-                            hoverMarker.setPosition(_position);
+                            //hoverMarker.setVisible(true);
+                            var _position = new google.maps.LatLng(this.lat,this.lon);
+                            //hoverMarker.setPosition(_position);
                         }
                     }
                 },
                 events: {
                     mouseOut: function() {
                         $reporting.empty();
-                        hoverMarker.setVisible(false);
+                        //hoverMarker.setVisible(false);
                     }
                 }
             }

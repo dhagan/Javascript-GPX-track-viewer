@@ -284,7 +284,15 @@ GPXParser.prototype._drawSegment = function (segment, segmentcolorprovider, trac
         // Verify that this is far enough away from the last point to be used, and draw the segment
         if (this._pntDistance(lastpnt, pnt) > this.mintrackpointdelta) {
             var color = segmentcolorprovider(lastpnt, pnt);
-            var polyline = new google.maps.Polyline(linesegment, color, trackwidth);
+            var poly = new google.maps.Polyline({
+                path: linesegment,
+                strokeColor: color,
+                strokeOpacity: .7,
+                strokeWeight: 4,
+                map: this.map
+            });
+            // DJH 11/26/2013 var polyline = new google.maps.Polyline(linesegment, color, trackwidth);
+            var polyline = new google.maps.Polyline(poly);
             this._addOverlay(polyline);
         }
 
@@ -421,10 +429,12 @@ GPXParser.prototype._centerAndZoom = function (gpxdata) {
     var bounds = new google.maps.LatLngBounds(new google.maps.LatLng(minlat, minlon), new google.maps.LatLng(maxlat, maxlon));
 
     this.map.setCenter(new google.maps.LatLng(centerlat, centerlon));
+    this.map.fitBounds(bounds);
 }
 
 GPXParser.prototype._addOverlay = function (marker) {
     this.markers.push(marker);
+    //DJH 11/26/2013 this can be a polyline as well google.map.Polyline() ?
     marker.setMap(this.map);
     //this.map.addOverlay(marker);
 }
