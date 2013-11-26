@@ -102,11 +102,18 @@ function writeLegend(ramp) {
 }
 
 function createMap(mapElementId) {
-    var map = new GMap2(document.getElementById(mapElementId));
-    map.addMapType(G_PHYSICAL_MAP);
-    map.setMapType(G_PHYSICAL_MAP);
-    map.addControl(new GLargeMapControl());
-    map.addControl(new GMapTypeControl());
+    var sf =  new google.maps.LatLng(37.86, -122.43);
+    var myOptions = {
+        zoom: 7,
+        center: sf,
+        mapTypeId: google.maps.MapTypeId.SATELLITE
+    };
+    //map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
+    var map = new google.maps.Map(document.getElementById(mapElementId), myOptions);
+    //map.addMapType(G_PHYSICAL_MAP);
+   // map.setMapType(G_PHYSICAL_MAP);
+    //map.addControl(new GLargeMapControl());
+    //map.addControl(new GMapTypeControl());
     return map;
 }
 

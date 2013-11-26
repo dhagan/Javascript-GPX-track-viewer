@@ -51,11 +51,6 @@ ProfileVisualizer.prototype.drawGpx = function (gpxdata) {
 
 var $reporting = $('#reporting');
 
-var hoverMarker = new google.maps.Marker({
-    map: map
-});
-
-
 
 ProfileVisualizer.prototype._chartSeries = function (seriesdata) {
     this.jqelement.html('');

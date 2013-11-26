@@ -1,7 +1,7 @@
 function GPXParser(map) {
     this.xmlDoc = null;
     this.map = map;
-    this.map.enableScrollWheelZoom();
+    //this.map.enableScrollWheelZoom();
     this.trackcolor = "#ff00ff"; // red
     this.segmentcolorprovider = function (pnt1, pnt2) {
         return this.trackcolor;
@@ -185,7 +185,7 @@ GPXParser.prototype._parseRoutePoint = function (routepoint) {
 
     pnt.lat = parseFloat(routepoint.getAttribute('lat'));
     pnt.lon = parseFloat(routepoint.getAttribute('lon'));
-    pnt.latlng = new GLatLng(pnt.lat, pnt.lon);
+    pnt.latlng = new  google.maps.LatLng(pnt.lat, pnt.lon);
 
     var names = routepoint.getElementsByTagName("name");
     if (names[0] !== undefined) {
@@ -315,7 +315,7 @@ GPXParser.prototype._drawRoute = function (route, color, trackwidth) {
 }
 
 GPXParser.prototype._drawWaypoint = function (waypoint) {
-    var marker = new GMarker(new GLatLng(waypoint.lat, waypoint.lon));
+    var marker = new google.maps.Marker(new google.maps.LatLng(waypoint.lat, waypoint.lon));
     GEvent.addListener(marker, "click", function () {
         marker.openInfoWindowHtml(waypoint.html);
     });
@@ -355,7 +355,7 @@ GPXParser.prototype._parseTrackPoint = function (trackpoint, lastpnt) {
 
     pnt.lat = parseFloat(trackpoint.getAttribute('lat'));
     pnt.lon = parseFloat(trackpoint.getAttribute('lon'));
-    pnt.latlng = new GLatLng(pnt.lat, pnt.lon);
+    pnt.latlng = new google.maps.LatLng(pnt.lat, pnt.lon);
 
     var elmsElevation = trackpoint.getElementsByTagName('ele');
     if (elmsElevation.length > 0) {
@@ -412,7 +412,7 @@ GPXParser.prototype._centerAndZoom = function (gpxdata, maptype) {
 
 
     if ((minlat == maxlat) && (minlat == 0)) {
-        this.map.setCenter(new GLatLng(49.327667, -122.942333), 14);
+        this.map.setCenter(new google.maps.LatLng(49.327667, -122.942333), 14);
         return;
     }
 
@@ -420,9 +420,9 @@ GPXParser.prototype._centerAndZoom = function (gpxdata, maptype) {
     var centerlon = (maxlon + minlon) / 2;
     var centerlat = (maxlat + minlat) / 2;
 
-    var bounds = new GLatLngBounds(new GLatLng(minlat, minlon), new GLatLng(maxlat, maxlon));
+    var bounds = new google.maps.LatLngBounds(new google.maps.LatLng(minlat, minlon), new google.maps.LatLng(maxlat, maxlon));
 
-    this.map.setCenter(new GLatLng(centerlat, centerlon), this.map.getBoundsZoomLevel(bounds), maptype);
+    this.map.setCenter(new google.maps.LatLng(centerlat, centerlon), this.map.getBoundsZoomLevel(bounds), maptype);
 }
 
 GPXParser.prototype._addOverlay = function (marker) {
